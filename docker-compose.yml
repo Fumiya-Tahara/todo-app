@@ -1,0 +1,38 @@
+version: "3"
+services:
+  db:
+    image: mysql:latest
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: todo_app
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  go:
+    image: golang:latest
+    container_name: go
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./go:/app/go
+    working_dir: /app/go
+    stdin_open: true
+
+  react:
+    image: node:latest
+    container_name: react
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - ./react:/app/react
+    working_dir: /app/react
+    stdin_open: true
