@@ -1,12 +1,36 @@
 openapi: '3.0.2'
+
 info:
-  title: API Title
+  title: "Test API"
+  description: "テスト用のAPIです"
   version: '1.0'
 servers:
-  - url: https://api.server.test/v1
+  - url: "https://localhost:8000"
+    description: "ローカル"
+    
 paths:
-  /test:
+  /test1:
     get:
+      summary: "テスト1"
+      tags:
+        - "test1"
+      deprecated: false
+      security:
+       - api_key: []
       responses:
         '200':
           description: OK
+
+  /test2:
+    get:
+      summary: "テスト2"
+      tags:
+        - "test2"
+      deprecated: false
+      security:
+        - api_key: []
+      responses:
+        '200':
+          description: OK
+
+
