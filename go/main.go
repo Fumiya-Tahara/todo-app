@@ -19,7 +19,6 @@ func main() {
 	var err error
 	db, err = sql.Open("mysql", dbConf)
 	if err != nil {
-		log.Printf("接続失敗")
 		log.Fatal(err)
 	}
 
