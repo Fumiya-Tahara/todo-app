@@ -9,15 +9,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
+type SqlHandler struct {
+	DB *sql.DB
+}
 
-func main() {
+func ConnectSql() *SqlHandler {
 	dbConf := fmt.Sprintf("%s:%s@tcp(db:3306)/%s?charset=utf8&parseTime=true", os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_DATABASE"))
 
-	log.Println(dbConf)
-
-	var err error
-	db, err = sql.Open("mysql", dbConf)
+	db, err := sql.Open("mysql", dbConf)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,6 +27,6 @@ func main() {
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-	fmt.Println("Connected!")
 
+	return &SqlHandler{db}
 }
