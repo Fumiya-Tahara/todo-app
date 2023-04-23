@@ -21,12 +21,26 @@ func ConnectSql() *SqlHandler {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
-
 	pingErr := db.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
 
 	return &SqlHandler{db}
+}
+
+func (handler *SqlHandler) Execute(query string, args ...interface{}) (sql.Result, error) {
+	type SqlResult struct {
+		Result sql.Result
+	}
+
+	result, err := handler.DB.Exec(query, args...)
+	res := SqlResult{
+		Result: result,
+	}
+	if err != nil {
+		return res.Result, err
+	}
+
+	return res.Result, nil
 }
