@@ -21,10 +21,14 @@ func ConnectSql() *SqlHandler {
 		log.Fatal(err)
 	}
 
+	defer db.Close()
+
 	pingErr := db.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
+
+	fmt.Println("connected!")
 
 	return &SqlHandler{db}
 }
