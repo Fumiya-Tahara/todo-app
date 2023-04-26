@@ -6,7 +6,6 @@ import (
 
 type Task struct {
 	ID          int
-	UserId      int
 	Title       string
 	Content     string
 	IsCompleted bool
