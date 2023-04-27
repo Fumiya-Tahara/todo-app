@@ -16,6 +16,7 @@ type SqlHandler struct {
 func ConnectSql() *SqlHandler {
 	dbConf := fmt.Sprintf("%s:%s@tcp(db:3306)/%s?charset=utf8&parseTime=true", os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_DATABASE"))
 
+	fmt.Println(dbConf)
 	db, err := sql.Open("mysql", dbConf)
 	if err != nil {
 		log.Fatal(err)
