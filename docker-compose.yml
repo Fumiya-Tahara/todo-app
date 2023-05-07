@@ -21,6 +21,7 @@ services:
     container_name: go
     ports:
       - "8080:8080"
+    command: go run cmd/main.go
     depends_on:
       - db
     env_file:

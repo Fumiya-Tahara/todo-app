@@ -9,11 +9,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type SqlHandler struct {
+type Storage struct {
 	DB *sql.DB
 }
 
-func ConnectSql() *SqlHandler {
+// connect MySQL
+func NewStorage() *Storage {
 	dbConf := fmt.Sprintf("%s:%s@tcp(db:3306)/%s?charset=utf8&parseTime=true", os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_DATABASE"))
 
 	fmt.Println(dbConf)
@@ -22,8 +23,6 @@ func ConnectSql() *SqlHandler {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
-
 	pingErr := db.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)
@@ -31,21 +30,17 @@ func ConnectSql() *SqlHandler {
 
 	fmt.Println("connected!")
 
-	return &SqlHandler{db}
+	return &Storage{db}
 }
 
-func (handler *SqlHandler) Execute(query string, args ...interface{}) (sql.Result, error) {
-	type SqlResult struct {
-		Result sql.Result
-	}
-
+func (handler *Storage) Execute(query string, args ...interface{}) (sql.Result, error) {
 	result, err := handler.DB.Exec(query, args...)
-	res := SqlResult{
-		Result: result,
-	}
+	// res := SqlResult{
+	// 	Result: result,
+	// }
 	if err != nil {
-		return res.Result, err
+		return result, err
 	}
 
-	return res.Result, nil
+	return result, nil
 }
