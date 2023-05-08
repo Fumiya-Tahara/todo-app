@@ -16,9 +16,9 @@ services:
       - ./mysql:/var/lib/mysql
       - ./mysql/log:/var/log/mysql
 
-  go:
+  api:
     image: golang:latest
-    container_name: go
+    container_name: api
     ports:
       - "8080:8080"
     command: go run cmd/main.go
@@ -27,18 +27,18 @@ services:
     env_file:
       - .env
     volumes:
-      - ./go:/app/go
-    working_dir: /app/go
+      - ./api:/app/api
+    working_dir: /app/api
     stdin_open: true
 
-  react:
+  views:
     image: node:latest
-    container_name: react
+    container_name: views
     ports:
       - "3000:3000"
     depends_on:
       - db
     volumes:
-      - ./react:/app/react
-    working_dir: /app/react
+      - ./views:/app/views
+    working_dir: /app/views
     stdin_open: true
