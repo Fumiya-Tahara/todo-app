@@ -1,7 +1,9 @@
+import './header.css';
+
 function Header() {
     return (
         <header>
-            <div>To Do App</div>
+            <div className="test">To Do App</div>
         </header>
     )
 }
