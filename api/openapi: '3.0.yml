@@ -1,31 +1,39 @@
 openapi: '3.0.2'
 
 info:
-  title: "Test API"
-  description: "テスト用のAPIです"
+  title: "ToDoApp"
+  description: "todoアプリのAPIドキュメント"
   version: '1.0'
 servers:
   - url: "https://localhost:8000"
     description: "ローカル"
     
 paths:
-  /test1:
+  /tasks:
     get:
-      summary: "テスト1"
+      summary: task一覧を取得
+      description: tasksテーブルからtitle, is_completed, deadlineを取得する。
+      operationId: GetTaskList
       tags:
-        - "test1"
+        - todo一覧
       deprecated: false
-      security:
-       - api_key: []
       responses:
-        '200':
-          description: OK
+        200:
+          description: データを取得しました
 
-  /test2:
+  /tasks/{taskId}:
     get:
-      summary: "テスト2"
+      summary: "taskの詳細を取得"
+      description: "tasksテーブルから個別のtaskを取得する。取得するカラムはtitle, content, is_completed, deadline"
       tags:
-        - "test2"
+        - "todo詳細"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: integer
+          description: tasksテーブルのid
       deprecated: false
       security:
         - api_key: []
