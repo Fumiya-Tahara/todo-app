@@ -12,7 +12,7 @@ paths:
   /tasks:
     get:
       summary: task一覧を取得
-      description: tasksテーブルからtitle, is_completed, deadlineを取得する。
+      description: tasksテーブルからJSON形式で、title, is_completed, deadlineを取得する。
       operationId: GetTaskList
       tags:
         - todo一覧
@@ -24,7 +24,7 @@ paths:
   /tasks/{taskId}:
     get:
       summary: "taskの詳細を取得"
-      description: "tasksテーブルから個別のtaskを取得する。取得するカラムはtitle, content, is_completed, deadline"
+      description: "tasksテーブルから個別のtaskをJSON形式で取得する。取得するカラムはtitle, content, is_completed, deadline"
       tags:
         - "todo詳細"
       parameters:
@@ -38,7 +38,7 @@ paths:
       security:
         - api_key: []
       responses:
-        '200':
-          description: OK
+        200:
+          description: データを取得しました
 
 
