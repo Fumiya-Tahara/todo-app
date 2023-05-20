@@ -2,19 +2,21 @@ package domain
 
 import (
 	"database/sql"
+	"encoding/json"
+	"log"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type Task struct {
-	ID          int
-	Title       string
-	Content     string
-	IsCompleted bool
-	Deadline    *time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          int        `json:"id"`
+	Title       string     `json:"title"`
+	Content     string     `json:"content"`
+	IsCompleted bool       `json:"isCompleted"`
+	Deadline    *time.Time `json:"deadline"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
 type Tasks []Task
@@ -23,7 +25,7 @@ type TaskStorage struct {
 	DB *sql.DB
 }
 
-func (storage *TaskStorage) GetTasks() ([]Task, error) {
+func (storage *TaskStorage) GetTasks() ([]byte, error) {
 	rows, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline, created_at, updated_at FROM tasks")
 	if err != nil {
 		return nil, err
@@ -37,10 +39,17 @@ func (storage *TaskStorage) GetTasks() ([]Task, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		tasks = append(tasks, task)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	return tasks, nil
+
+	jsonTasks, err := json.Marshal(tasks)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return jsonTasks, nil
 }

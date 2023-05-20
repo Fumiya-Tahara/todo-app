@@ -20,7 +20,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(data)
+		fmt.Println(string(data))
 	})
 
 	fmt.Println("Server started at http://localhost:8080")
