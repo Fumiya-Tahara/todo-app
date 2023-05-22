@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import TodoListComponent from '../components/js/TodoListComponent';
+import axios from 'axios';
+import TodoList from '../components/js/TodoList';
 
-const TodoList = () => {
+const ShowTodoList = () => {
     const [todos, setTodos] = useState([]);
   
     const todoNameRef = useRef();
@@ -28,7 +29,7 @@ const TodoList = () => {
   
     return (
       <>
-        <TodoListComponent todos={todos} toggleTodo={toggleTodo}/>
+        <TodoList todos={todos} toggleTodo={toggleTodo}/>
         <label htmlFor="title">title</label>
         <input type="text" ref={todoNameRef} />
         <button onClick={handleAddTodo}>タスクを追加する</button>
@@ -38,4 +39,4 @@ const TodoList = () => {
       );
   }
 
-  export default TodoList;
+  export default ShowTodoList;
