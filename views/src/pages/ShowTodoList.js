@@ -1,5 +1,4 @@
-import { useState, useRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import TodoList from '../components/js/TodoList';
 
@@ -7,13 +6,14 @@ const ShowTodoList = () => {
     const [todos, setTodos] = useState([]);
   
     const todoNameRef = useRef();
-    
-    const handleAddTodo = () => {
-      const name = todoNameRef.current.value;
-      setTodos((prevTodos) => {
-        return [...prevTodos, { id: uuidv4(), name: name, completed: false }]
-      })
-    };
+
+    useEffect(() => {
+      axios
+        .get('http://localhost:8080/tasks')
+        .then((res) => {
+          console.log(res.data);
+        })
+    })
   
     const toggleTodo = (id) => {
       const newTodos = [...todos];
@@ -32,7 +32,6 @@ const ShowTodoList = () => {
         <TodoList todos={todos} toggleTodo={toggleTodo}/>
         <label htmlFor="title">title</label>
         <input type="text" ref={todoNameRef} />
-        <button onClick={handleAddTodo}>タスクを追加する</button>
         <button onClick={handleClear}>完了したタスクの削除</button>
         <div>残りのタスク:{todos.filter((todo) => !todo.completed).length}</div>
       </>
