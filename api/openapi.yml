@@ -1,0 +1,41 @@
+openapi: '3.0.2'
+
+info:
+  title: "ToDoApp"
+  version: '1.0'
+servers:
+  - url: "https://localhost:8080"
+    description: "local"
+    
+paths:
+  /tasks:
+    get:
+      summary: get all tasks
+      description: Get title, is_completed and deadline from tasks table in json format
+      operationId: GetTaskList
+      tags:
+        - Todo List
+      deprecated: false
+      responses:
+        200:
+          description: Got data
+
+  /tasks/{id}:
+    get:
+      summary: get specific task
+      description: Get columns of a specific task from tasks table in json format. the columns are content, is_completed and deadline
+      tags:
+        - Task Detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            type: integer
+          description: id in tasks table
+      deprecated: false
+      responses:
+        200:
+          description: Got data
+
+
