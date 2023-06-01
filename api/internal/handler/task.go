@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -30,7 +29,6 @@ func (h handler) GetTaskList(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(string(data))
 		w.Write(data)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -39,5 +37,22 @@ func (h handler) GetTaskList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h handler) GetTasksId(w http.ResponseWriter, r *http.Request, id int) {
-	log.Println("GetTaskId呼び出し成功")
+	client := infrastracture.NewStorage()
+	defer client.DB.Close()
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	if r.Method == "GET" {
+		w.WriteHeader(http.StatusOK)
+		taskHandler := &domain.TaskStorage{
+			DB: client.DB,
+		}
+		data, err := taskHandler.GetSpecificTask(id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		w.Write(data)
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("Method not allowed"))
+	}
 }

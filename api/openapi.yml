@@ -23,7 +23,7 @@ paths:
   /tasks/{id}:
     get:
       summary: get specific task
-      description: Get columns of a specific task from tasks table in json format. the columns are content, is_completed and deadline
+      description: Get columns of a specific task from tasks table in json format. the columns are id, title, content, is_completed and deadline
       tags:
         - Task Detail
       parameters:

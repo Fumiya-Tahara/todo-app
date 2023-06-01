@@ -53,3 +53,18 @@ func (storage *TaskStorage) GetTasks() ([]byte, error) {
 
 	return jsonTasks, nil
 }
+
+func (storage *TaskStorage) GetSpecificTask(id int) ([]byte, error) {
+	row, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + string(id))
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+
+	jsonTask, err := json.Marshal(row)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return jsonTask, nil
+}
