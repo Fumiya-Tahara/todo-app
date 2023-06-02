@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"strconv"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -55,13 +56,22 @@ func (storage *TaskStorage) GetTasks() ([]byte, error) {
 }
 
 func (storage *TaskStorage) GetSpecificTask(id int) ([]byte, error) {
-	row, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + string(id))
+	strId := strconv.Itoa(id)
+	row, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + strId)
 	if err != nil {
 		return nil, err
 	}
 	defer row.Close()
 
-	jsonTask, err := json.Marshal(row)
+	var task *Task
+	if row.Next() {
+		task := new(Task)
+		err := row.Scan(&task.ID, &task.Title, &task.Content, &task.IsCompleted, &task.Deadline)
+		if err != nil {
+			return nil, err
+		}
+	}
+	jsonTask, err := json.Marshal(task)
 	if err != nil {
 		log.Fatal(err)
 	}
