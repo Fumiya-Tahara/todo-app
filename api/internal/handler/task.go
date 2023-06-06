@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/Fumiya-Tahara/todo-app/generated/openapi"
@@ -22,21 +23,15 @@ func (h handler) GetTaskList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Methods", "GET")
 	if r.Method == "GET" {
-		path := r.URL.Path
-		id := strings.TrimPrefix(path, "/tasks")
-		if id == "" {
-			w.WriteHeader(http.StatusOK)
-			taskHandler := &domain.TaskStorage{
-				DB: client.DB,
-			}
-			data, err := taskHandler.GetTasks()
-			if err != nil {
-				log.Fatal(err)
-			}
-			w.Write(data)
+		w.WriteHeader(http.StatusOK)
+		taskHandler := &domain.TaskStorage{
+			DB: client.DB,
 		}
-		// idがあった場合の処理
-
+		data, err := taskHandler.GetTasks()
+		if err != nil {
+			log.Fatal(err)
+		}
+		w.Write(data)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		w.Write([]byte("Method not allowed"))
@@ -62,4 +57,20 @@ func (h handler) GetTasksId(w http.ResponseWriter, r *http.Request, id int) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		w.Write([]byte("Method not allowed"))
 	}
+}
+
+func HandleTasks(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler()
+	trimPath := strings.TrimPrefix(r.URL.Path, "/tasks/")
+	if trimPath == "" {
+		h.GetTaskList(w, r)
+		return
+	}
+
+	id, err := strconv.Atoi(trimPath)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	h.GetTasksId(w, r, id)
 }

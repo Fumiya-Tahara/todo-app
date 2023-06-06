@@ -56,22 +56,26 @@ func (storage *TaskStorage) GetTasks() ([]byte, error) {
 }
 
 func (storage *TaskStorage) GetSpecificTask(id int) ([]byte, error) {
+	log.Println("GetSpecificTask呼び出し成功")
 	strId := strconv.Itoa(id)
-	row, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + strId)
+	rows, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + strId)
 	if err != nil {
 		return nil, err
 	}
-	defer row.Close()
+	defer rows.Close()
 
-	var task *Task
-	if row.Next() {
-		task := new(Task)
-		err := row.Scan(&task.ID, &task.Title, &task.Content, &task.IsCompleted, &task.Deadline)
+	var tasks []Task
+	for rows.Next() {
+		var task Task
+		err := rows.Scan(&task.ID, &task.Title, &task.Content, &task.IsCompleted, &task.Deadline)
 		if err != nil {
 			return nil, err
 		}
+
+		tasks = append(tasks, task)
 	}
-	jsonTask, err := json.Marshal(task)
+	log.Println(tasks)
+	jsonTask, err := json.Marshal(tasks)
 	if err != nil {
 		log.Fatal(err)
 	}

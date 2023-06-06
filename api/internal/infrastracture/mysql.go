@@ -28,7 +28,7 @@ func NewStorage() *Storage {
 		log.Fatal(pingErr)
 	}
 
-	fmt.Println("connected!")
+	log.Println("connected!")
 
 	return &Storage{db}
 }
