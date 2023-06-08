@@ -38,4 +38,15 @@ paths:
         200:
           description: Got data
 
+  /create_task:
+    post:
+      summary: create tasks
+      description: create tasks data from inputted data
+      tags:
+        - Create Tasks
+      deprecated: false
+      responses:
+        200:
+          description: Created data
+
 

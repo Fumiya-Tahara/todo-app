@@ -59,6 +59,10 @@ func (h handler) GetTasksId(w http.ResponseWriter, r *http.Request, id int) {
 	}
 }
 
+func (h handler) PostCreateTask(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
 func HandleTasks(w http.ResponseWriter, r *http.Request) {
 	h := NewHandler()
 	trimPath := strings.TrimPrefix(r.URL.Path, "/tasks/")

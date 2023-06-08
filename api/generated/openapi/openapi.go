@@ -13,6 +13,9 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// create tasks
+	// (POST /create_task)
+	PostCreateTask(w http.ResponseWriter, r *http.Request)
 	// get all tasks
 	// (GET /tasks)
 	GetTaskList(w http.ResponseWriter, r *http.Request)
@@ -29,6 +32,21 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// PostCreateTask operation middleware
+func (siw *ServerInterfaceWrapper) PostCreateTask(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCreateTask(w, r)
+	})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
 
 // GetTaskList operation middleware
 func (siw *ServerInterfaceWrapper) GetTaskList(w http.ResponseWriter, r *http.Request) {
@@ -184,6 +202,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/create_task", wrapper.PostCreateTask)
+	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/tasks", wrapper.GetTaskList)
 	})
