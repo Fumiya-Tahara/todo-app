@@ -56,7 +56,6 @@ func (storage *TaskStorage) GetTasks() ([]byte, error) {
 }
 
 func (storage *TaskStorage) GetSpecificTask(id int) ([]byte, error) {
-	log.Println("GetSpecificTask呼び出し成功")
 	strId := strconv.Itoa(id)
 	rows, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + strId)
 	if err != nil {
@@ -81,4 +80,13 @@ func (storage *TaskStorage) GetSpecificTask(id int) ([]byte, error) {
 	}
 
 	return jsonTask, nil
+}
+
+func (storage *TaskStorage) CreateTasks(title string, content string, deadline *time.Time) {
+	strDeadline := deadline.Format("2006-01-02 15:04:05")
+	stmt, err := storage.DB.Prepare("INSERT INTO tasks(title, content, deadline) VALUES(" + title + ", " + content + ", " + strDeadline + ")")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
 }
