@@ -76,5 +76,8 @@ func HandleTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h handler) PostCreateTask(w http.ResponseWriter, r *http.Request) {
+	client := infrastracture.NewStorage()
+	defer client.DB.Close()
+
 	return
 }

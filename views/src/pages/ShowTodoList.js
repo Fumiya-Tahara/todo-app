@@ -9,7 +9,7 @@ const ShowTodoList = () => {
 
     useEffect(() => {
       axios
-        .get('http://localhost:8080/tasks')
+        .get('http://localhost:8080/tasks/')
         .then((res) => {
           console.log(res.data);
         })

@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-	// http.HandleFunc("/tasks/", func(w http.ResponseWriter, r *http.Request) { h.HandleTasks(w, r) })
 	http.HandleFunc("/tasks/", handler.HandleTasks)
 
 	fmt.Println("Server started at http://localhost:8080")
