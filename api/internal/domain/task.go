@@ -11,13 +11,13 @@ import (
 )
 
 type Task struct {
-	ID          int        `json:"id"`
-	Title       string     `json:"title"`
-	Content     string     `json:"content"`
-	IsCompleted bool       `json:"isCompleted"`
-	Deadline    *time.Time `json:"deadline"`
-	CreatedAt   time.Time  `json:"createdAt"`
-	UpdatedAt   time.Time  `json:"updatedAt"`
+	ID          int       `json:"id"`
+	Title       string    `json:"title"`
+	Content     string    `json:"content"`
+	IsCompleted bool      `json:"isCompleted"`
+	Deadline    time.Time `json:"deadline"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type Tasks []Task
@@ -27,7 +27,8 @@ type TaskStorage struct {
 }
 
 func (storage *TaskStorage) GetTasks() ([]byte, error) {
-	rows, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline, created_at, updated_at FROM tasks")
+	query := "SELECT id, title, content, is_completed, deadline, created_at, updated_at FROM tasks"
+	rows, err := storage.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +58,8 @@ func (storage *TaskStorage) GetTasks() ([]byte, error) {
 
 func (storage *TaskStorage) GetSpecificTask(id int) ([]byte, error) {
 	strId := strconv.Itoa(id)
-	rows, err := storage.DB.Query("SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + strId)
+	query := "SELECT id, title, content, is_completed, deadline FROM tasks WHERE id = " + strId
+	rows, err := storage.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -82,11 +84,17 @@ func (storage *TaskStorage) GetSpecificTask(id int) ([]byte, error) {
 	return jsonTask, nil
 }
 
-func (storage *TaskStorage) CreateTasks(title string, content string, deadline *time.Time) {
-	strDeadline := deadline.Format("2006-01-02 15:04:05")
-	stmt, err := storage.DB.Prepare("INSERT INTO tasks(title, content, deadline) VALUES(" + title + ", " + content + ", " + strDeadline + ")")
+func (storage *TaskStorage) CreateTasks(title string, content string, deadline time.Time) {
+	query := "INSERT INTO tasks (title, content, deadline) VALUES (?, ?, ?)"
+	result, err := storage.DB.Exec(query, title, content, deadline)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer stmt.Close()
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if rows != 1 {
+		log.Fatalf("expected to affect 1 row, affected %d", rows)
+	}
 }

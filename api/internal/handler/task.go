@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Fumiya-Tahara/todo-app/generated/openapi"
 	"github.com/Fumiya-Tahara/todo-app/internal/domain"
@@ -78,6 +79,17 @@ func HandleTasks(w http.ResponseWriter, r *http.Request) {
 func (h handler) PostCreateTask(w http.ResponseWriter, r *http.Request) {
 	client := infrastracture.NewStorage()
 	defer client.DB.Close()
+	// if r.Method == "POST" {
+	// 	w.WriteHeader(http.StatusOK)
 
-	return
+	// }
+	title := "testTitleだよ"
+	content := "testContentだわ"
+	deadline := time.Now()
+
+	taskHandler := &domain.TaskStorage{
+		DB: client.DB,
+	}
+
+	taskHandler.CreateTasks(title, content, deadline)
 }
