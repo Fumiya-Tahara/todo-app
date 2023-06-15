@@ -113,3 +113,18 @@ func (storage *TaskStorage) UpdateTask(id int, title string, content string, isC
 		log.Fatalf("expected to affect 1 row, affected %d", rows)
 	}
 }
+
+func (storage *TaskStorage) DeleteTask(id int) {
+	query := "DELETE FROM tasks WHERE id = ?"
+	result, err := storage.DB.Exec(query, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if rows != 1 {
+		log.Fatalf("expected to affect 1 row, affected %d", rows)
+	}
+}

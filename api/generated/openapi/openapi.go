@@ -15,19 +15,19 @@ import (
 type ServerInterface interface {
 	// create tasks
 	// (POST /create_task)
-	PostCreateTask(w http.ResponseWriter, r *http.Request)
+	CreateTask(w http.ResponseWriter, r *http.Request)
 	// delete specific task
 	// (DELETE /delete-task/{id})
-	DeleteDeleteTaskId(w http.ResponseWriter, r *http.Request, id int)
+	DeleteTask(w http.ResponseWriter, r *http.Request, id int)
 	// get all tasks
 	// (GET /tasks)
 	GetTaskList(w http.ResponseWriter, r *http.Request)
 	// get specific task
 	// (GET /tasks/{id})
-	GetTasksId(w http.ResponseWriter, r *http.Request, id int)
+	GetSpecificTask(w http.ResponseWriter, r *http.Request, id int)
 	// update specific task
 	// (PUT /update-task/{id})
-	PutUpdateTaskId(w http.ResponseWriter, r *http.Request, id int)
+	UpdateTask(w http.ResponseWriter, r *http.Request, id int)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -39,12 +39,12 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// PostCreateTask operation middleware
-func (siw *ServerInterfaceWrapper) PostCreateTask(w http.ResponseWriter, r *http.Request) {
+// CreateTask operation middleware
+func (siw *ServerInterfaceWrapper) CreateTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostCreateTask(w, r)
+		siw.Handler.CreateTask(w, r)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -54,8 +54,8 @@ func (siw *ServerInterfaceWrapper) PostCreateTask(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// DeleteDeleteTaskId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteDeleteTaskId(w http.ResponseWriter, r *http.Request) {
+// DeleteTask operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -70,7 +70,7 @@ func (siw *ServerInterfaceWrapper) DeleteDeleteTaskId(w http.ResponseWriter, r *
 	}
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteDeleteTaskId(w, r, id)
+		siw.Handler.DeleteTask(w, r, id)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -95,8 +95,8 @@ func (siw *ServerInterfaceWrapper) GetTaskList(w http.ResponseWriter, r *http.Re
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// GetTasksId operation middleware
-func (siw *ServerInterfaceWrapper) GetTasksId(w http.ResponseWriter, r *http.Request) {
+// GetSpecificTask operation middleware
+func (siw *ServerInterfaceWrapper) GetSpecificTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -111,7 +111,7 @@ func (siw *ServerInterfaceWrapper) GetTasksId(w http.ResponseWriter, r *http.Req
 	}
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetTasksId(w, r, id)
+		siw.Handler.GetSpecificTask(w, r, id)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -121,8 +121,8 @@ func (siw *ServerInterfaceWrapper) GetTasksId(w http.ResponseWriter, r *http.Req
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PutUpdateTaskId operation middleware
-func (siw *ServerInterfaceWrapper) PutUpdateTaskId(w http.ResponseWriter, r *http.Request) {
+// UpdateTask operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -137,7 +137,7 @@ func (siw *ServerInterfaceWrapper) PutUpdateTaskId(w http.ResponseWriter, r *htt
 	}
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PutUpdateTaskId(w, r, id)
+		siw.Handler.UpdateTask(w, r, id)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -261,19 +261,19 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/create_task", wrapper.PostCreateTask)
+		r.Post(options.BaseURL+"/create_task", wrapper.CreateTask)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/delete-task/{id}", wrapper.DeleteDeleteTaskId)
+		r.Delete(options.BaseURL+"/delete-task/{id}", wrapper.DeleteTask)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/tasks", wrapper.GetTaskList)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/tasks/{id}", wrapper.GetTasksId)
+		r.Get(options.BaseURL+"/tasks/{id}", wrapper.GetSpecificTask)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/update-task/{id}", wrapper.PutUpdateTaskId)
+		r.Put(options.BaseURL+"/update-task/{id}", wrapper.UpdateTask)
 	})
 
 	return r

@@ -24,6 +24,7 @@ paths:
     get:
       summary: get specific task
       description: Get columns of a specific task from tasks table in json format. the columns are id, title, content, is_completed and deadline
+      operationId: GetSpecificTask
       tags:
         - Task Detail
       parameters:
@@ -42,6 +43,7 @@ paths:
     post:
       summary: create tasks
       description: create tasks data from inputted data
+      operationId: CreateTask
       tags:
         - Create Tasks
       deprecated: false
@@ -53,6 +55,7 @@ paths:
     put:
       summary: update specific task
       description: Update existing task in tasks table. Get task by id.
+      operationId: UpdateTask
       tags:
         - Update Task
       parameters:
@@ -71,6 +74,7 @@ paths:
     delete:
       summary: delete specific task
       description: Delete existing task in tasks table. Get task by id.
+      operationId: DeleteTask
       tags:
         - Delete Task
       parameters:

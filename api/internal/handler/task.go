@@ -39,7 +39,7 @@ func (h handler) GetTaskList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h handler) GetTasksId(w http.ResponseWriter, r *http.Request, id int) {
+func (h handler) GetSpecificTask(w http.ResponseWriter, r *http.Request, id int) {
 	client := infrastracture.NewStorage()
 	defer client.DB.Close()
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -60,7 +60,7 @@ func (h handler) GetTasksId(w http.ResponseWriter, r *http.Request, id int) {
 	}
 }
 
-func (h handler) PostCreateTask(w http.ResponseWriter, r *http.Request) {
+func (h handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	client := infrastracture.NewStorage()
 	defer client.DB.Close()
 	// if r.Method == "POST" {
@@ -78,7 +78,7 @@ func (h handler) PostCreateTask(w http.ResponseWriter, r *http.Request) {
 	taskHandler.CreateTasks(title, content, deadline)
 }
 
-func (h handler) PutUpdateTaskId(w http.ResponseWriter, r *http.Request, id int) {
+func (h handler) UpdateTask(w http.ResponseWriter, r *http.Request, id int) {
 	client := infrastracture.NewStorage()
 	defer client.DB.Close()
 
@@ -95,8 +95,15 @@ func (h handler) PutUpdateTaskId(w http.ResponseWriter, r *http.Request, id int)
 
 }
 
-func (h handler) DeleteDeleteTaskId(w http.ResponseWriter, r *http.Request, id int) {
+func (h handler) DeleteTask(w http.ResponseWriter, r *http.Request, id int) {
+	client := infrastracture.NewStorage()
+	defer client.DB.Close()
 
+	taskHandler := &domain.TaskStorage{
+		DB: client.DB,
+	}
+
+	taskHandler.DeleteTask(id)
 }
 
 func HandleTasks(w http.ResponseWriter, r *http.Request) {
@@ -111,15 +118,25 @@ func HandleTasks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	h.GetTasksId(w, r, id)
+	h.GetSpecificTask(w, r, id)
 }
 
-func HandlePutUpdateTaskId(w http.ResponseWriter, r *http.Request) {
+func HandleUpdateTask(w http.ResponseWriter, r *http.Request) {
 	h := NewHandler()
 	trimPath := strings.TrimPrefix(r.URL.Path, "/update-task/")
 	id, err := strconv.Atoi(trimPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	h.PutUpdateTaskId(w, r, id)
+	h.UpdateTask(w, r, id)
+}
+
+func HandleDeleteTask(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler()
+	trimPath := strings.TrimPrefix(r.URL.Path, "/delete-task/")
+	id, err := strconv.Atoi(trimPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	h.DeleteTask(w, r, id)
 }

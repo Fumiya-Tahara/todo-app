@@ -9,8 +9,9 @@ import (
 
 func main() {
 	http.HandleFunc("/tasks/", handler.HandleTasks)
-	http.HandleFunc("/create-task", handler.NewHandler().PostCreateTask)
-	http.HandleFunc("/update-task/", handler.HandlePutUpdateTaskId)
+	http.HandleFunc("/create-task", handler.NewHandler().CreateTask)
+	http.HandleFunc("/update-task/", handler.HandleUpdateTask)
+	http.HandleFunc("/delete-task/", handler.HandleDeleteTask)
 
 	fmt.Println("Server started at http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
