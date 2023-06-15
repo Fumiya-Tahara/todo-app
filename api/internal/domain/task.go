@@ -98,3 +98,18 @@ func (storage *TaskStorage) CreateTasks(title string, content string, deadline t
 		log.Fatalf("expected to affect 1 row, affected %d", rows)
 	}
 }
+
+func (storage *TaskStorage) UpdateTask(id int, title string, content string, isCompleted bool, deadline time.Time) {
+	query := "UPDATE tasks SET title = ?, content = ?, is_completed = ?, deadline = ? WHERE id = ?"
+	result, err := storage.DB.Exec(query, title, content, isCompleted, deadline, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if rows != 1 {
+		log.Fatalf("expected to affect 1 row, affected %d", rows)
+	}
+}

@@ -49,4 +49,39 @@ paths:
         200:
           description: Created data
 
+  /update-task/{id}:
+    put:
+      summary: update specific task
+      description: Update existing task in tasks table. Get task by id.
+      tags:
+        - Update Task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: id in tasks table
+      deprecated: false
+      responses:
+        200:
+          description: Updated data
+
+  /delete-task/{id}:
+    delete:
+      summary: delete specific task
+      description: Delete existing task in tasks table. Get task by id.
+      tags:
+        - Delete Task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: id in tasks table
+      deprecated: false
+      responses:
+        200:
+          description: :Deleted data
 

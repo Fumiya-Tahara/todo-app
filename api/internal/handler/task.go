@@ -60,6 +60,45 @@ func (h handler) GetTasksId(w http.ResponseWriter, r *http.Request, id int) {
 	}
 }
 
+func (h handler) PostCreateTask(w http.ResponseWriter, r *http.Request) {
+	client := infrastracture.NewStorage()
+	defer client.DB.Close()
+	// if r.Method == "POST" {
+	// 	w.WriteHeader(http.StatusOK)
+
+	// }
+	title := "testTitle"
+	content := "testContent"
+	deadline := time.Now()
+
+	taskHandler := &domain.TaskStorage{
+		DB: client.DB,
+	}
+
+	taskHandler.CreateTasks(title, content, deadline)
+}
+
+func (h handler) PutUpdateTaskId(w http.ResponseWriter, r *http.Request, id int) {
+	client := infrastracture.NewStorage()
+	defer client.DB.Close()
+
+	title := "更新したタイトル"
+	content := "更新した内容"
+	isCompleted := false
+	deadline := time.Now()
+
+	taskHandler := &domain.TaskStorage{
+		DB: client.DB,
+	}
+
+	taskHandler.UpdateTask(id, title, content, isCompleted, deadline)
+
+}
+
+func (h handler) DeleteDeleteTaskId(w http.ResponseWriter, r *http.Request, id int) {
+
+}
+
 func HandleTasks(w http.ResponseWriter, r *http.Request) {
 	h := NewHandler()
 	trimPath := strings.TrimPrefix(r.URL.Path, "/tasks/")
@@ -70,26 +109,17 @@ func HandleTasks(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(trimPath)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatal(err)
 	}
 	h.GetTasksId(w, r, id)
 }
 
-func (h handler) PostCreateTask(w http.ResponseWriter, r *http.Request) {
-	client := infrastracture.NewStorage()
-	defer client.DB.Close()
-	// if r.Method == "POST" {
-	// 	w.WriteHeader(http.StatusOK)
-
-	// }
-	title := "testTitleだよ"
-	content := "testContentだわ"
-	deadline := time.Now()
-
-	taskHandler := &domain.TaskStorage{
-		DB: client.DB,
+func HandlePutUpdateTaskId(w http.ResponseWriter, r *http.Request) {
+	h := NewHandler()
+	trimPath := strings.TrimPrefix(r.URL.Path, "/update-task/")
+	id, err := strconv.Atoi(trimPath)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	taskHandler.CreateTasks(title, content, deadline)
+	h.PutUpdateTaskId(w, r, id)
 }

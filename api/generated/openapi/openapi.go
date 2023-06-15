@@ -16,12 +16,18 @@ type ServerInterface interface {
 	// create tasks
 	// (POST /create_task)
 	PostCreateTask(w http.ResponseWriter, r *http.Request)
+	// delete specific task
+	// (DELETE /delete-task/{id})
+	DeleteDeleteTaskId(w http.ResponseWriter, r *http.Request, id int)
 	// get all tasks
 	// (GET /tasks)
 	GetTaskList(w http.ResponseWriter, r *http.Request)
 	// get specific task
 	// (GET /tasks/{id})
 	GetTasksId(w http.ResponseWriter, r *http.Request, id int)
+	// update specific task
+	// (PUT /update-task/{id})
+	PutUpdateTaskId(w http.ResponseWriter, r *http.Request, id int)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -39,6 +45,32 @@ func (siw *ServerInterfaceWrapper) PostCreateTask(w http.ResponseWriter, r *http
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostCreateTask(w, r)
+	})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// DeleteDeleteTaskId operation middleware
+func (siw *ServerInterfaceWrapper) DeleteDeleteTaskId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteDeleteTaskId(w, r, id)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -80,6 +112,32 @@ func (siw *ServerInterfaceWrapper) GetTasksId(w http.ResponseWriter, r *http.Req
 
 	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetTasksId(w, r, id)
+	})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PutUpdateTaskId operation middleware
+func (siw *ServerInterfaceWrapper) PutUpdateTaskId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutUpdateTaskId(w, r, id)
 	})
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -206,10 +264,16 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/create_task", wrapper.PostCreateTask)
 	})
 	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/delete-task/{id}", wrapper.DeleteDeleteTaskId)
+	})
+	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/tasks", wrapper.GetTaskList)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/tasks/{id}", wrapper.GetTasksId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/update-task/{id}", wrapper.PutUpdateTaskId)
 	})
 
 	return r
